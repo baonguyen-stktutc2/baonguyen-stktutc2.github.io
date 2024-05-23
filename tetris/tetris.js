@@ -3,11 +3,11 @@ const context = canvas.getContext('2d');
 const nextCanvas = document.getElementById('next');
 const nextContext = nextCanvas.getContext('2d');
 
-context.scale(20, 20);
-nextContext.scale(20, 20);
+context.scale(10, 10);
+nextContext.scale(10, 10);
 
 function arenaSweep() {
-    let rowCount = 1;
+    let rowCount = 0;
     outer: for (let y = arena.length - 1; y > 0; --y) {
         for (let x = 0; x < arena[y].length; ++x) {
             if (arena[y][x] === 0) {
@@ -19,8 +19,11 @@ function arenaSweep() {
         arena.unshift(row);
         ++y;
 
-        player.score += rowCount * 10;
-        rowCount *= 2;
+        rowCount++;
+    }
+    if (rowCount > 0) {
+        player.score += Math.pow(2, rowCount - 1);
+        player.lines += rowCount;
     }
 }
 
@@ -172,6 +175,7 @@ function playerReset() {
     if (collide(arena, player)) {
         arena.forEach(row => row.fill(0));
         player.score = 0;
+        player.lines = 0;
         updateScore();
     }
     drawNextPiece();
@@ -212,6 +216,7 @@ function update(time = 0) {
 
 function updateScore() {
     document.getElementById('score').innerText = player.score;
+    document.getElementById('lines').innerText = player.lines;
 }
 
 function drawNextPiece() {
@@ -231,7 +236,7 @@ const colors = [
     'purple',
 ];
 
-const arena = createMatrix(10, 20);
+const arena = createMatrix(36, 64);
 
 let nextPiece = createPiece('T');
 
@@ -239,6 +244,7 @@ const player = {
     pos: {x: 0, y: 0},
     matrix: null,
     score: 0,
+    lines: 0,
 };
 
 document.addEventListener('keydown', event => {
@@ -270,3 +276,4 @@ document.getElementById('down').addEventListener('click', () => {
 playerReset();
 updateScore();
 update();
+
