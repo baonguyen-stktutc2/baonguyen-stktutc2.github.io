@@ -197,7 +197,7 @@ function playerRotate(dir) {
 }
 
 let dropCounter = 0;
-let dropInterval = 1000;
+let dropInterval = 1000 / 1.5; // Tăng tốc độ lên gấp 1.5 lần
 
 let lastTime = 0;
 function update(time = 0) {
@@ -236,7 +236,7 @@ const colors = [
     'purple',
 ];
 
-const arena = createMatrix(36, 64);
+const arena = createMatrix(9, 16);
 
 let nextPiece = createPiece('T');
 
@@ -261,19 +261,38 @@ document.addEventListener('keydown', event => {
     }
 });
 
-document.getElementById('left').addEventListener('click', () => {
+document.getElementById('left').addEventListener('mousedown', () => {
     playerMove(-1);
+    holdMove(-1);
 });
 
-document.getElementById('right').addEventListener('click', () => {
+document.getElementById('right').addEventListener('mousedown', () => {
     playerMove(1);
+    holdMove(1);
 });
 
 document.getElementById('down').addEventListener('click', () => {
-    playerDrop();
+    while (!collide(arena, player)) {
+        player.pos.y++;
+    }
+    player.pos.y--;
+    merge(arena, player);
+    playerReset();
+    arenaSweep();
+    updateScore();
 });
+
+document.addEventListener('mouseup', () => {
+    clearInterval(holdInterval);
+});
+
+let holdInterval;
+function holdMove(dir) {
+    holdInterval = setInterval(() => {
+        playerMove(dir);
+    }, dropInterval * 0.8);
+}
 
 playerReset();
 updateScore();
 update();
-
