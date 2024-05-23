@@ -290,6 +290,7 @@ document.addEventListener('mouseup', () => {
 
 let holdInterval;
 function holdMove(dir) {
+    clearInterval(holdInterval);
     holdInterval = setInterval(() => {
         playerMove(dir);
     }, dropInterval * 0.8);
