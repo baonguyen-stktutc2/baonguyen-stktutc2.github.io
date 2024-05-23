@@ -1,3 +1,4 @@
+
 const canvas = document.getElementById('tetris');
 const context = canvas.getContext('2d');
 const nextCanvas = document.getElementById('next');
@@ -164,7 +165,8 @@ function playerMove(dir) {
 
 function playerReset() {
     const pieces = 'TJLOSZI';
-    player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
+    player.matrix = nextPiece;
+    nextPiece = createPiece(pieces[pieces.length * Math.random() | 0]);
     player.pos.y = 0;
     player.pos.x = (arena[0].length / 2 | 0) -
                    (player.matrix[0].length / 2 | 0);
@@ -173,6 +175,7 @@ function playerReset() {
         player.score = 0;
         updateScore();
     }
+    drawNextPiece();
 }
 
 function playerRotate(dir) {
@@ -212,6 +215,12 @@ function updateScore() {
     document.getElementById('score').innerText = player.score;
 }
 
+function drawNextPiece() {
+    nextContext.fillStyle = '#000';
+    nextContext.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
+    drawMatrix(nextPiece, {x: 1, y: 1}, nextContext);
+}
+
 const colors = [
     null,
     'red',
@@ -224,6 +233,8 @@ const colors = [
 ];
 
 const arena = createMatrix(10, 20);
+
+let nextPiece = createPiece('T');
 
 const player = {
     pos: {x: 0, y: 0},
@@ -243,6 +254,18 @@ document.addEventListener('keydown', event => {
     } else if (event.keyCode === 87) {
         playerRotate(1);
     }
+});
+
+document.getElementById('left').addEventListener('click', () => {
+    playerMove(-1);
+});
+
+document.getElementById('right').addEventListener('click', () => {
+    playerMove(1);
+});
+
+document.getElementById('down').addEventListener('click', () => {
+    playerDrop();
 });
 
 playerReset();
