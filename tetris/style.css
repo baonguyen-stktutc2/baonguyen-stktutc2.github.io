@@ -29,7 +29,7 @@ h3 {
     text-align: center;
 }
 
-#score {
+#score, #lines {
     font-size: 2em;
     text-align: center;
 }
